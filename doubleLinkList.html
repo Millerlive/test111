@@ -1,0 +1,314 @@
+<!DOCTYPE html>
+<html lang="en">
+  <head>
+    <meta charset="UTF-8" />
+    <meta http-equiv="X-UA-Compatible" content="IE=edge" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <title>single Link List</title>
+  </head>
+
+  <body>
+    <!-- 
+        链表:
+            节点包含两个结构：数据域data  指针域 next 
+            数据域用于存储节点数据，指针域用于 指向下一个节点
+    -->
+    <!-- 复用单链表 -->
+    <script>
+      // 链表对象化，便于理解
+      const obj = {
+        data: 1,
+        next: {
+          data: 2,
+          next: {
+            data: 3,
+            next: null,
+          },
+        },
+      };
+      // 封装一个链表结构
+      // 定义一个节点
+      class Node {
+        constructor(data) {
+          this.data = data; //数据域
+          this.next = null; //指针域
+        }
+      }
+
+      class LinkList {
+        // 创建链表
+        /* 
+                创建头结点：
+                将头结点的指针域（next）指向null
+                头结点不存储数据，主要用于链表的起始点
+             */
+        constructor() {
+          this.count = 0; //索引  用于记录节点的数量
+          this.head = null; //链头  ，指向链表的第一个节点，默认为null,表示链表为空
+        }
+        // 向链表中添加元素
+        push(element) {
+          let node = new Node(element);
+          console.log(node);
+          // 如果链表为空 新节点作为头结点
+          // 如果链表不为空，链尾元素next指向新节点
+          if (this.head === null) {
+            this.head = node;
+          } else {
+            // 找到最后一个节点  查找是从链头开始查找
+            // 保存一下 head
+            let current = this.head;
+
+            // current.next为空时循环结束，即到达链尾时循环结束
+            while (current.next !== null) {
+              current = current.next;
+            }
+            // 将新节点添加到链表末尾
+            current.next = node;
+          }
+          this.count++;
+        }
+        // 删除元素  指定位置进行删除
+        removeAt(index) {
+          if (index >= 0 && index < this.count) {
+            let current = this.head;
+            if (index === 0) {
+              // 如果删除的是头节点，将头节点指向下一个节点
+              this.head = this.head.next;
+            } else {
+              let prev;
+              for (let i = 0; i < index; i++) {
+                prev = current;
+                current = current.next;
+              }
+              // 将前一个节点的指针指向要删除的节点的下一个节点，跳过要删除的节点
+              prev.next = current.next;
+            }
+            // 更新节点计数
+            this.count--;
+            return current.data;
+          }
+          return undefined;
+        }
+        // 获取指定索引节点
+        getNodeAt(index) {
+          if (index >= 0 && index < this.count) {
+            let current = this.head;
+            for (let i = 0; i < index; i++) {
+              current = current.next;
+            }
+            return current;
+          }
+          return;
+        }
+
+        // 删除指定索引节点
+        removeAt2(index) {
+          if (index >= 0 && index < this.count) {
+            let current = this.head;
+            if (index === 0) {
+              // 如果删除的是头节点，将头节点指向下一个节点
+              this.head = this.head.next;
+            } else {
+              // 获取前一个节点
+              let prev = this.getNodeAt(index - 1);
+              current = prev.next;
+              // 将前一个节点的指针指向要删除的节点的下一个节点，跳过要删除的节点
+              prev.next = current.next;
+            }
+            // 更新节点计数
+            this.count--;
+            return current.data;
+          }
+          return;
+        }
+
+        // 根据数据返回索引
+        indexOf(data) {
+          let current = this.head;
+          for (let i = 0; i < this.count; i++) {
+            if (data === current.data) {
+              return i;
+            }
+            current = current.next;
+          }
+          return -1;
+        }
+
+        // 删除指定数据的节点
+        removeData(data) {
+          // 根据数据返回索引
+          const index = this.indexOf(data);
+          return this.removeAt(index);
+        }
+
+        // 在固定位置插入内容
+        insert(element, index) {
+          // 判断索引是否在有效范围内
+          // = this.count 可以在尾部插入节点
+          if (index >= 0 && index <= this.count) {
+            const node = new Node(element);
+            if (index === 0) {
+              // 在链表头部插入节点
+              const current = this.head;
+              node.next = current;
+              this.head = node;
+            } else {
+              // 获取到index前面的节点
+              const previous = this.getNodeAt(index - 1);
+              // 当前节点
+              const current = previous.next;
+
+              // 将前面节点的next改为插入到node ,将插入的node的next指向current
+              previous.next = node;
+              node.next = current;
+            }
+            this.count++;
+            return true;
+          }
+          return false;
+        }
+        // 判断链表是否为空
+        isEmpty() {
+          return this.size() === 0;
+        }
+        // 链表长度
+        size() {
+          return this.count;
+        }
+
+        // 返回链表头部元素
+        getHead() {
+          return this.head;
+        }
+      }
+      let list = new LinkList();
+      // console.log(list);
+      // list.push(50);
+      // list.push(100);
+      // list.push(150);
+      // list.push(200);
+      // console.log(list);
+    </script>
+    <script>
+      // 在单链表的基础上封装双向链表
+      // 双向链表节点
+      class DoublyNode extends Node {
+        constructor(element) {
+          super(element);
+          // 添加前驱指针
+          // 在双向链表中，每个节点都有一个指向前一个节点的指针
+          this.prev = null;
+        }
+      }
+      class DoublyLinkedList extends LinkList {
+        constructor() {
+          super();
+          // 指向链表尾部
+          this.tail = null;
+        }
+        // 对于涉及previous的方法都需要重写
+        push(element) {
+          const node = new DoublyNode(element); //创建一个新的双向链表节点
+          if (this.head === null) {
+            // 如果链表为空，头节点和尾节点都是加入的新节点
+            this.head = node;
+            this.tail = node;
+          } else {
+            // 如果链表不为空
+            this.tail.next = node; //将新节点设置为尾节点的next
+            node.prev = this.tail; //将尾节点设置为新节点的prev
+            this.tail = node; //将新节点设置为新的尾节点
+          }
+          this.count++;
+        }
+        // 在指定位置插入节点
+        insert(element, index) {
+          if (index >= 0 && index <= this.count) {
+            //检查插入位置是否合法
+            const node = new DoublyNode(element);
+            let current = this.head;
+            if (index === 0) {
+              // 在头部插入
+              // 链表为空时
+              if (this.head == null) {
+                // 如果链表为空，头节点和尾节点都是加入的新节点
+                this.head = node;
+                this.tail = node;
+              }else{
+                // 如果链表不为空
+                node.next = this.head
+                this.head.prev = node
+                this.head = node
+              }
+            }else if(index === this.count){
+              // 在尾部插入
+              current = this.tail
+              current.next = node
+              node.prev = current
+              this.tail = node
+            }else{
+              // 在链表中间插入
+              // 获取第index个节点的前一个节点
+              const previous = this.getNodeAt(index - 1)
+              current = previous.next  //获取指定索引的节点
+              // 也就是将node插入到current和previous之间
+              node.next = current
+              node.prev = previous
+              previous.next = node
+              current.prev = node
+            }
+            this.count++;  //增加链表的计数
+            return true
+          }
+          return false   //如果index不在可用范围内，返回false
+        }
+        // 删除指定索引的节点
+        removeAt(index){
+          if(index>=0 && index < this.count){
+            let current = this.head
+            // 如果删除的是头部节点
+            if(index ===0){
+              this.head = current.next  //将头节点指向下一节点
+              // 如果链表只有一个元素，那么删除后 尾节点要指向null
+              if(this.count === 1){
+                this.tail = null
+              }else{
+                this.head.prev = null
+              }
+            }else if(index === this.count - 1){
+              // 如果删除的是尾部节点
+              current = this.tail
+              this.tail = current.prev
+              this.tail.next = null
+            }else{
+              // 删除链表中间的某一个节点
+              // 获取第index个节点的前一个节点
+              const previous = this.getNodeAt(index - 1)
+              current = previous.next  //获取指定索引的节点
+              previous.next = current.next
+              current.next.prev = previous
+            }
+            this.count--
+            return current   //返回删除的节点
+          }
+          return ;
+        }
+
+        // 获取链表头节点  尾节点
+        getHead(){
+          return this.head
+        }
+        getTail(){
+          return this.tail
+        }
+      }
+      let dList = new DoublyLinkedList();
+      dList.push(10)
+      dList.push(20)
+      dList.push(30)
+      dList.push(40)
+      console.log(dList);
+    </script>
+  </body>
+</html>

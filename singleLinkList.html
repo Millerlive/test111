@@ -1,0 +1,193 @@
+<!DOCTYPE html>
+<html lang="en">
+  <head>
+    <meta charset="UTF-8" />
+    <meta http-equiv="X-UA-Compatible" content="IE=edge" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <title>single Link List</title>
+  </head>
+
+  <body>
+    <!-- 
+        链表:
+            节点包含两个结构：数据域data  指针域 next 
+            数据域用于存储节点数据，指针域用于 指向下一个节点
+    -->
+    <script>
+      // 链表对象化，便于理解
+      const obj = {
+        data: 1,
+        next: {
+          data: 2,
+          next: {
+            data: 3,
+            next: null,
+          },
+        },
+      };
+      // 封装一个链表结构
+      // 定义一个节点
+      class Node {
+        constructor(data) {
+          this.data = data; //数据域
+          this.next = null; //指针域
+        }
+      }
+
+      class LinkList {
+        // 创建链表
+        /* 
+                创建头结点：
+                将头结点的指针域（next）指向null
+                头结点不存储数据，主要用于链表的起始点
+             */
+        constructor() {
+          this.count = 0; //索引  用于记录节点的数量
+          this.head = null; //链头  ，指向链表的第一个节点，默认为null,表示链表为空
+        }
+        // 向链表中添加元素
+        push(element) {
+          let node = new Node(element);
+          console.log(node);
+          // 如果链表为空 新节点作为头结点
+          // 如果链表不为空，链尾元素next指向新节点
+          if (this.head === null) {
+            this.head = node;
+          } else {
+            // 找到最后一个节点  查找是从链头开始查找
+            // 保存一下 head
+            let current = this.head;
+
+            // current.next为空时循环结束，即到达链尾时循环结束
+            while (current.next !== null) {
+              current = current.next;
+            }
+            // 将新节点添加到链表末尾
+            current.next = node;
+          }
+          this.count++;
+        }
+        // 删除元素  指定位置进行删除
+        removeAt(index) {
+          if (index >= 0 && index < this.count) {
+            let current = this.head;
+            if (index === 0) {
+              // 如果删除的是头节点，将头节点指向下一个节点
+              this.head = this.head.next;
+            } else {
+              let prev;
+              for (let i = 0; i < index; i++) {
+                prev = current;
+                current = current.next;
+              }
+              // 将前一个节点的指针指向要删除的节点的下一个节点，跳过要删除的节点
+              prev.next = current.next;
+            }
+            // 更新节点计数
+            this.count--;
+            return current.data;
+          }
+          return undefined;
+        }
+        // 获取指定索引节点
+        getNodeAt(index) {
+          if (index >= 0 && index < this.count) {
+            let current = this.head;
+            for (let i = 0; i < index; i++) {
+              current = current.next;
+            }
+            return current;
+          }
+          return;
+        }
+
+        // 删除指定索引节点
+        removeAt2(index) {
+          if (index >= 0 && index < this.count) {
+            let current = this.head;
+            if (index === 0) {
+              // 如果删除的是头节点，将头节点指向下一个节点
+              this.head = this.head.next;
+            } else {
+              // 获取前一个节点
+              let prev = this.getNodeAt(index - 1);
+              current = prev.next;
+              // 将前一个节点的指针指向要删除的节点的下一个节点，跳过要删除的节点
+              prev.next = current.next;
+            }
+            // 更新节点计数
+            this.count--;
+            return current.data;
+          }
+          return;
+        }
+
+        // 根据数据返回索引
+        indexOf(data) {
+          let current = this.head;
+          for (let i = 0; i < this.count; i++) {
+            if (data === current.data) {
+              return i;
+            }
+            current = current.next;
+          }
+          return -1;
+        }
+
+        // 删除指定数据的节点
+        removeData(data) {
+          // 根据数据返回索引
+          const index = this.indexOf(data);
+          return this.removeAt(index);
+        }
+
+        // 在固定位置插入内容
+        insert(element, index) {
+          // 判断索引是否在有效范围内
+          // = this.count 可以在尾部插入节点
+          if (index >= 0 && index <= this.count) {
+            const node = new Node(element);
+            if (index === 0) {
+              // 在链表头部插入节点
+              const current = this.head;
+              node.next = current;
+              this.head = node;
+            } else {
+              // 获取到index前面的节点
+              const previous = this.getNodeAt(index - 1);
+              // 当前节点
+              const current = previous.next;
+
+              // 将前面节点的next改为插入到node ,将插入的node的next指向current
+              previous.next = node;
+              node.next = current;
+            }
+            this.count++;
+            return true;
+          }
+          return false;
+        }
+        // 判断链表是否为空
+        isEmpty() {
+          return this.size() === 0;
+        }
+        // 链表长度
+        size() {
+          return this.count;
+        }
+
+        // 返回链表头部元素
+        getHead(){
+            return this.head
+        }
+      }
+      let list = new LinkList();
+      console.log(list);
+      list.push(50);
+      list.push(100);
+      list.push(150);
+      list.push(200);
+      console.log(list);
+    </script>
+  </body>
+</html>

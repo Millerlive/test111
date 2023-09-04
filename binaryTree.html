@@ -1,0 +1,117 @@
+<!DOCTYPE html>
+<html lang="en">
+  <head>
+    <meta charset="UTF-8" />
+    <meta http-equiv="X-UA-Compatible" content="IE=edge" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <title>binary tree</title>
+  </head>
+  <body>
+    <script>
+      // 二叉搜索树
+      // 二叉树每个节点最多有两个子节点：左侧子节点  右侧子节点
+      class Node {
+        constructor(key) {
+          this.key = key;
+          this.left = null;
+          this.right = null;
+        }
+      }
+      // 封装一个binary search tree 结构
+      class BST {
+        constructor() {
+          this.root = null;
+        }
+        // 向树中添加元素
+        insert(key) {
+          // 如果为空
+          if (this.root == null) {
+            this.root = new Node(key);
+          } else {
+            // 如果tree不是空的  进行与节点key对比
+            this.insertNode(this.root, key); //封装一个对比的方法
+          }
+        }
+        insertNode(node, key) {
+          // 如果插入的值比根节点小时,将key插入的节点的左边
+          if (key < node.key) {
+            // 将key插入当前节点左子树(判断左子树是否有值)
+            if (node.left == null) {
+              node.left = new Node(key);
+            } else {
+              // 如果左子树不为空，使用递归调用insertNode方法，继续与左子树进行对比
+              this.insertNode(node.left, key);
+            }
+          } else {
+            // 将key插入右子树
+            if (node.right == null) {
+              node.right = new Node(key);
+            } else {
+              this.insertNode(node.right, key);
+            }
+          }
+        }
+
+        // 遍历tree
+        /* 
+                前序遍历：先访问根节点，再访问左子树，最后访问右子树。
+                中序遍历：先访问左子树，再访问根节点，最后访问右子树。
+                后序遍历：先访问左子树，再访问右子树，最后访问根节点。
+             */
+        // 中序遍历   升序
+        // callback  接收一个函数，做对应的操作
+        inOrderMap(callback) {
+          this.inOrderMapNode(this.root, callback);
+        }
+        // 递归  函数  写结束条件
+        inOrderMapNode(node, callback) {
+          if (node != null) {
+            this.inOrderMapNode(node.left, callback); //使用递归遍历左侧节点
+            callback(node.key); //节点本身
+            this.inOrderMapNode(node.right, callback); //使用递归遍历右侧节点
+          }
+        }
+        // 前序遍历  先输出根节点 = 》左侧所有节点(从小到大)  =》右侧所有节点(从小到大)
+        preOrderMap(callback) {
+          this.preOrderMapNode(this.root, callback); //递归函数遍历
+        }
+        preOrderMapNode(node, callback) {
+          if (node != null) {
+            callback(node.key); //节点本身
+            this.inOrderMapNode(node.left, callback); //使用递归遍历左侧节点
+            this.inOrderMapNode(node.right, callback); //使用递归遍历右侧节点
+          }
+        }
+        // 后序遍历   先输出左侧所有节点(从小到大)   = 》 根节点  =》右侧所有节点(从小到大)
+        postOrderMap(callback) {
+          this.postOrderMapNode(this.root, callback); //递归函数遍历
+        }
+        postOrderMapNode(node, callback) {
+          if (node != null) {
+            this.inOrderMapNode(node.left, callback); //使用递归遍历左侧节点
+            this.inOrderMapNode(node.right, callback); //使用递归遍历右侧节点
+            callback(node.key); //节点本身
+          }
+        }
+      }
+      const bst = new BST();
+      bst.insert(10);
+      bst.insert(12);
+      bst.insert(8);
+      bst.insert(6);
+      bst.insert(9);
+      bst.insert(4);
+      bst.insert(18);
+      console.log(bst);
+    //   bst.inOrderMap((value) => {
+    //     console.log(value); //8 10 12 18
+    //   });
+      bst.preOrderMap((key) => {
+        console.log(key);
+      });
+      bst.postOrderMap((key) => {
+        console.log(key);
+      });
+    </script>
+  </body>
+</html>
